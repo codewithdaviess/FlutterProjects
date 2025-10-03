@@ -1,16 +1,10 @@
-import 'package:fitness/models/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fitness/models/category_model.dart';
+import 'package:fitness/models/diet_model.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-
-  List<CategoryModel> categories = [];
-
-  void getCategories()
-  {
-    categories = CategoryModel.getCategories();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,96 +15,137 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _searchField(),
-          SizedBox(height: 40,),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Text(
-                  'Category',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              SizedBox(height: 15,),
-              Container(
-                height: 150,
-                color: Colors.green,
-                child: ListView.builder(
-                  itemBuilder: (context, index)
-                  {
-                    return Container();
-                  },
-                ),
-              )
-            ],
-          ),
+          const SizedBox(height: 40),
+          _categoriesSection(),
         ],
       ),
     );
   }
 
-  Container _searchField() {
-    return Container(
-          margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromARGB(0, 255, 255, 255),
-                spreadRadius: 40,
-                blurRadius: 0.0,
-              ),
-            ],
-          ),
-          child: TextField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Search Pancake',
-              hintStyle: TextStyle(
-                color: Color(0xffDDDADA),
-                fontSize: 14,
-              ),
-              contentPadding: EdgeInsets.all(15),
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
-                child: SvgPicture.asset('assets/icons/search.svg'),
-              ),
-              suffixIcon: SizedBox(
-                width: 100,
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      VerticalDivider(
-                        color: Colors.black,
-                        indent: 10,
-                        endIndent: 10,
-                        thickness: 0.1,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: SvgPicture.asset('assets/icons/sliders-horizontal.svg'),
-                      ),
-                    ],
-                  ),
+  Column _categoriesSection() {
+    return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                'Category',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none,
+            ),
+            const SizedBox(height: 15),
+            SizedBox(
+              height: 120,
+              child: ListView.separated(
+                itemCount: CategoryModel.getCategories().length,
+                separatorBuilder: (context, index) => const SizedBox(width: 25),
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                itemBuilder: (context, index) {
+                  CategoryModel category = CategoryModel.getCategories()[index];
+                  return Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      // ignore: deprecated_member_use
+                      color: CategoryModel.getCategories()[index].boxColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: category.boxColor,
+                            shape: BoxShape.circle
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(category.iconPath),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          category.name,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        );
+  }
+
+  Container _searchField() {
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            // ignore: deprecated_member_use
+            color: const Color(0xff1D1617).withOpacity(0.11),
+            blurRadius: 40,
+            spreadRadius: 0.0,
+          ),
+        ],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: 'Search Pancake',
+          hintStyle: const TextStyle(
+            color: Color(0xffDDDADA),
+            fontSize: 14,
+          ),
+          contentPadding: const EdgeInsets.all(15),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12),
+            child: SvgPicture.asset('assets/icons/search.svg'),
+          ),
+          suffixIcon: SizedBox(
+            width: 100,
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const VerticalDivider(
+                    color: Colors.black,
+                    indent: 10,
+                    endIndent: 10,
+                    thickness: 0.1,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SvgPicture.asset('assets/icons/sliders-horizontal.svg'),
+                  ),
+                ],
               ),
             ),
           ),
-        );
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
   }
 
   AppBar appBar(BuildContext context) {
     return AppBar(
-      title: Text(
+      title: const Text(
         'Breakfast',
         style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
       ),
@@ -121,10 +156,10 @@ class HomePage extends StatelessWidget {
           Navigator.pop(context);
         },
         child: Container(
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Color(0xffF7F8F8),
+            color: const Color(0xffF7F8F8),
             borderRadius: BorderRadius.circular(10),
           ),
           child: SvgPicture.asset(
@@ -137,14 +172,15 @@ class HomePage extends StatelessWidget {
       actions: [
         GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            // You might want to change this to show a menu or settings
+            // Navigator.pop(context);
           },
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             alignment: Alignment.center,
             width: 37,
             decoration: BoxDecoration(
-              color: Color(0xffF7F8F8),
+              color: const Color(0xffF7F8F8),
               borderRadius: BorderRadius.circular(10),
             ),
             child: SvgPicture.asset(
